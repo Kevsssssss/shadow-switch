@@ -177,8 +177,10 @@ func startHeartbeat() {
 func updateHeartbeat() {
 	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
 	url := fmt.Sprintf("%s/heartbeats/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
+	
+	// Use Firebase Server Timestamp placeholder
 	data := map[string]interface{}{
-		"last_seen": time.Now().Unix(),
+		"last_seen": map[string]string{".sv": "timestamp"},
 		"status":    "online",
 		"ip":        getLocalIP(),
 	}

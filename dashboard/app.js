@@ -78,12 +78,16 @@ function switchMachine() {
 }
 
 function updateStatus(data) {
-    const now = Math.floor(Date.now() / 1000);
-    const diff = now - data.last_seen;
+    // Firebase Server Timestamps are in milliseconds
+    const lastSeenMs = data.last_seen;
+    const nowMs = Date.now();
+    
+    // Convert to seconds for the diff check
+    const diff = Math.floor((nowMs - lastSeenMs) / 1000);
 
-    console.log(`[Status Update] Now: ${now}, Last Seen: ${data.last_seen}, Diff: ${diff}s`);
+    console.log(`[Status Update] Now(ms): ${nowMs}, LastSeen(ms): ${lastSeenMs}, Diff: ${diff}s`);
 
-    // Allow a slight negative diff if clocks are slightly off, but assume offline if > 60s
+    // With Server Timestamps, the diff should be very small (near 0)
     if (diff < 60 && diff > -60) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
@@ -92,7 +96,7 @@ function updateStatus(data) {
         setOffline();
     }
 
-    const date = new Date(data.last_seen * 1000);
+    const date = new Date(lastSeenMs);
     lastSeenText.textContent = `Last seen: ${date.toLocaleTimeString()}`;
     localIpText.textContent = `Local IP: ${data.ip || '--.--.--.--'}`;
 }
