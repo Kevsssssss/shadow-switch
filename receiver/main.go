@@ -27,23 +27,39 @@ type ActionRequest struct {
 	Action string `json:"action"`
 }
 
+// Default Configuration (Built-in)
+var (
+	DefaultFirebaseURL    = "https://shadow-switch-default-rtdb.asia-southeast1.firebasedatabase.app"
+	DefaultFirebaseSecret = "jhtV78fwNzTzXiFa6LsAQVCXLaKgqEQ017zQOUTM"
+	DefaultAuthToken      = "AntiKierSystem"
+)
+
 func main() {
 	if runtime.GOOS != "windows" {
 		log.Fatal("ShadowSwitch Receiver is only supported on Windows.")
 	}
 
-	// Try to load .env from the executable's directory
+	// Try to load .env from the executable's directory (Optional override)
 	exePath, err := os.Executable()
 	if err == nil {
 		_ = godotenv.Load(path.Join(path.Dir(exePath), ".env"))
 	}
-	
-	// Fallback to current working directory
-	_ = godotenv.Load()
+	_ = godotenv.Load() // Fallback to CWD
 
 	fmt.Println("ShadowSwitch Receiver starting...")
 
-	// Multi-machine support: Use OS username if MACHINE_ID is not set
+	// Use environment variable if set, otherwise use built-in default
+	fbURL := getEnv("FIREBASE_URL", DefaultFirebaseURL)
+	fbSecret := getEnv("FIREBASE_SECRET", DefaultFirebaseSecret)
+	authToken := getEnv("AUTH_TOKEN", DefaultAuthToken)
+
+	// Update OS Env so other functions can see them
+	os.Setenv("FIREBASE_URL", fbURL)
+	os.Setenv("FIREBASE_SECRET", fbSecret)
+	os.Setenv("AUTH_TOKEN", authToken)
+
+	// Multi-machine support
+: Use OS username if MACHINE_ID is not set
 	machineID := getEnv("MACHINE_ID", "")
 	if machineID == "" {
 		currentUser, err := user.Current()
