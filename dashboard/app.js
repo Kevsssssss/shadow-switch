@@ -94,8 +94,8 @@ function updateStatus(data) {
     console.log(`[Status Update] Now(ms): ${nowMs}, LastSeen(ms): ${lastSeenMs}, Diff: ${diff}s`);
 
     // Use Absolute value so we don't care if the clock is ahead or behind.
-    // As long as the difference is less than 5 minutes (300s), mark it online.
-    if (Math.abs(diff) < 15) {
+    // As long as the difference is less than 5 seconds (5s), mark it online.
+    if (Math.abs(diff) < 5) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
     } else {

@@ -21,7 +21,7 @@ import (
 )
 
 // LAN Dashboard HTML (Minified)
-const LAN_DASHBOARD_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadowSwitch LAN</title><style>body{background:#111112;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}h1{color:#dd2c00}.card{background:#1a1a1c;padding:2rem;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.3);text-align:center}button{background:#dd2c00;color:#fff;border:none;padding:1rem 2rem;margin:0.5rem;border-radius:4px;cursor:pointer;font-weight:700;transition:opacity .2s}button:hover{opacity:0.8}button:disabled{background:#555;cursor:not-allowed}</style></head><body><div class="card"><h1>ShadowSwitch</h1><p>Local Management Interface</p><div><button onclick="execute('shutdown')">Shutdown</button><button onclick="execute('restart')">Restart</button><button onclick="execute('logout')">Log Out</button></div></div><script>function execute(action){if(!confirm("Are you sure you want to "+action+"?"))return;const btn=event.target;btn.disabled=true;fetch("/api/action",{method:"POST",headers:{"Content-Type":"application/json","X-ShadowSwitch-Token":"CHANGE_ME_SECURE_TOKEN"},body:JSON.stringify({action})}).then(r=>r.json()).then(data=>{alert(data.message||"Command sent");btn.disabled=false}).catch(err=>{alert("Error: "+err);btn.disabled=false})}</script></body></html>`
+const LAN_DASHBOARD_HTML = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShadowSwitch LAN</title><style>body{background:#111112;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;margin:0}h1{color:#dd2c00}.card{background:#1a1a1c;padding:2rem;border-radius:8px;box-shadow:0 4px 6px rgba(0,0,0,0.3);text-align:center}button{background:#dd2c00;color:#fff;border:none;padding:1rem 2rem;margin:0.5rem;border-radius:4px;cursor:pointer;font-weight:700;transition:opacity .2s}button:hover{opacity:0.8}button:disabled{background:#555;cursor:not-allowed}</style></head><body><div class="card"><h1>ShadowSwitch</h1><p>Local Management Interface</p><div><button onclick="execute('shutdown')">Shutdown</button><button onclick="execute('restart')">Restart</button><button onclick="execute('lock')">Lock</button><button onclick="execute('logout')">Log Out</button></div></div><script>function execute(action){if(!confirm("Are you sure you want to "+action+"?"))return;const btn=event.target;btn.disabled=true;fetch("/api/action",{method:"POST",headers:{"Content-Type":"application/json","X-ShadowSwitch-Token":"CHANGE_ME_SECURE_TOKEN"},body:JSON.stringify({action})}).then(r=>r.json()).then(data=>{alert(data.message||"Command sent");btn.disabled=false}).catch(err=>{alert("Error: "+err);btn.disabled=false})}</script></body></html>`
 
 type ActionRequest struct {
 	Action string `json:"action"`
@@ -157,6 +157,8 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 		go execCommand("shutdown", "/r", "/t", "0", "/f")
 	case "logout":
 		go execCommand("shutdown", "/l")
+	case "lock":
+		go execCommand("rundll32.exe", "user32.dll,LockWorkStation")
 	default:
 		msg = "Unknown action: " + req.Action
 		success = false
@@ -282,6 +284,8 @@ func handleFirebaseAction(action string) {
 		execCommand("shutdown", "/r", "/t", "0", "/f")
 	case "logout":
 		execCommand("shutdown", "/l")
+	case "lock":
+		execCommand("rundll32.exe", "user32.dll,LockWorkStation")
 	}
 }
 
