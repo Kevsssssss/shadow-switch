@@ -81,10 +81,14 @@ function updateStatus(data) {
     const now = Math.floor(Date.now() / 1000);
     const diff = now - data.last_seen;
 
-    if (diff < 60) {
+    console.log(`[Status Update] Now: ${now}, Last Seen: ${data.last_seen}, Diff: ${diff}s`);
+
+    // Allow a slight negative diff if clocks are slightly off, but assume offline if > 60s
+    if (diff < 60 && diff > -60) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
     } else {
+        console.log(`[Status Update] Machine marked offline due to diff: ${diff}s`);
         setOffline();
     }
 

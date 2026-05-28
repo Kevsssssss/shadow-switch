@@ -168,7 +168,8 @@ func startHeartbeat() {
 }
 
 func updateHeartbeat() {
-	url := fmt.Sprintf("%s/heartbeats/%s.json?auth=%s", os.Getenv("FIREBASE_URL"), os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
+	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
+	url := fmt.Sprintf("%s/heartbeats/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
 	data := map[string]interface{}{
 		"last_seen": time.Now().Unix(),
 		"status":    "online",
@@ -193,7 +194,8 @@ func updateHeartbeat() {
 }
 
 func startFirebaseListener() {
-	url := fmt.Sprintf("%s/commands/%s.json?auth=%s", os.Getenv("FIREBASE_URL"), os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
+	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
+	url := fmt.Sprintf("%s/commands/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
 	
 	for {
 		log.Println("Connecting to Firebase stream...")
@@ -260,7 +262,8 @@ func handleFirebaseAction(action string) {
 }
 
 func resetFirebaseCommand() {
-	url := fmt.Sprintf("%s/commands/%s.json?auth=%s", os.Getenv("FIREBASE_URL"), os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
+	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
+	url := fmt.Sprintf("%s/commands/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
 	req, _ := http.NewRequest(http.MethodDelete, url, nil)
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
