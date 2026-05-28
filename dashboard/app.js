@@ -1,17 +1,17 @@
 // Firebase Configuration
-if (!window.CONFIG || !window.CONFIG.DATABASE_URL || window.CONFIG.DATABASE_URL.includes("VERCEL_ENV")) {
+if (!window.CONFIG || !window.CONFIG.FIREBASE_DATABASE_URL || window.CONFIG.FIREBASE_DATABASE_URL.includes("VERCEL_ENV")) {
     console.error("Firebase Config Missing or Invalid:", window.CONFIG);
     alert("CRITICAL ERROR: Firebase Configuration was not injected. Check your Vercel Build Logs.");
 }
 
 const firebaseConfig = {
-    apiKey: window.CONFIG?.API_KEY || "",
-    authDomain: window.CONFIG?.AUTH_DOMAIN || "",
-    databaseURL: window.CONFIG?.DATABASE_URL || "",
-    projectId: window.CONFIG?.PROJECT_ID || "",
-    storageBucket: window.CONFIG?.STORAGE_BUCKET || "",
-    messagingSenderId: window.CONFIG?.MESSAGING_SENDER_ID || "",
-    appId: window.CONFIG?.APP_ID || ""
+    apiKey: window.CONFIG?.FIREBASE_API_KEY || "",
+    authDomain: window.CONFIG?.FIREBASE_AUTH_DOMAIN || "",
+    databaseURL: window.CONFIG?.FIREBASE_DATABASE_URL || "",
+    projectId: window.CONFIG?.FIREBASE_PROJECT_ID || "",
+    storageBucket: window.CONFIG?.FIREBASE_STORAGE_BUCKET || "",
+    messagingSenderId: window.CONFIG?.FIREBASE_MESSAGING_SENDER_ID || "",
+    appId: window.CONFIG?.FIREBASE_APP_ID || ""
 };
 
 // Initialize Firebase
