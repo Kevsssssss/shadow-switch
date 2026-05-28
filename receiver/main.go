@@ -89,7 +89,9 @@ func getLocalIP() string {
 
 func getLANHTML() string {
 	token := getEnv("AUTH_TOKEN", "CHANGE_ME_SECURE_TOKEN")
-	return strings.ReplaceAll(LAN_DASHBOARD_HTML, "CHANGE_ME_SECURE_TOKEN", token)
+	machineID := os.Getenv("MACHINE_ID")
+	html := strings.ReplaceAll(LAN_DASHBOARD_HTML, "CHANGE_ME_SECURE_TOKEN", token)
+	return strings.ReplaceAll(html, "Local Management Interface", "Machine: "+machineID)
 }
 
 func startLANServer() {
@@ -178,10 +180,16 @@ func updateHeartbeat() {
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("Heartbeat error: %v\n", err)
+		log.Printf("[Heartbeat] Network Error: %v\n", err)
 		return
 	}
-	resp.Body.Close()
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("[Heartbeat] Firebase Rejected (Status %d). Check your Secret/URL.\n", resp.StatusCode)
+	} else {
+		log.Printf("[Heartbeat] Success sent for %s\n", os.Getenv("MACHINE_ID"))
+	}
 }
 
 func startFirebaseListener() {
