@@ -1,4 +1,9 @@
 // Firebase Configuration
+if (!window.CONFIG || !window.CONFIG.DATABASE_URL || window.CONFIG.DATABASE_URL.includes("VERCEL_ENV")) {
+    console.error("Firebase Config Missing or Invalid:", window.CONFIG);
+    alert("CRITICAL ERROR: Firebase Configuration was not injected. Check your Vercel Build Logs.");
+}
+
 const firebaseConfig = {
     apiKey: window.CONFIG?.API_KEY || "",
     authDomain: window.CONFIG?.AUTH_DOMAIN || "",
