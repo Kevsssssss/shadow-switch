@@ -1,21 +1,26 @@
 #!/bin/bash
 
-echo "Starting build process..."
+echo "Starting robust build process..."
 
-# Create a public folder for Vercel output
+# Create public directory
 mkdir -p public
 
-# Copy files to the public folder
+# Copy static assets
 cp index.html public/
 cp app.js public/
 
-# Replace placeholders in the copy inside the public folder
-sed -i "s|<!-- VERCEL_ENV_API_KEY -->|$VERCEL_ENV_API_KEY|g" public/index.html
-sed -i "s|<!-- VERCEL_ENV_AUTH_DOMAIN -->|$VERCEL_ENV_AUTH_DOMAIN|g" public/index.html
-sed -i "s|<!-- VERCEL_ENV_DATABASE_URL -->|$VERCEL_ENV_DATABASE_URL|g" public/index.html
-sed -i "s|<!-- VERCEL_ENV_PROJECT_ID -->|$VERCEL_ENV_PROJECT_ID|g" public/index.html
-sed -i "s|<!-- VERCEL_ENV_STORAGE_BUCKET -->|$VERCEL_ENV_STORAGE_BUCKET|g" public/index.html
-sed -i "s|<!-- VERCEL_ENV_MESSAGING_SENDER_ID -->|$VERCEL_ENV_MESSAGING_SENDER_ID|g" public/index.html
-sed -i "s|<!-- VERCEL_ENV_APP_ID -->|$VERCEL_ENV_APP_ID|g" public/index.html
+# Generate config.js dynamically using echo (much safer than sed)
+cat <<EOF > public/config.js
+window.CONFIG = {
+    API_KEY: "$VERCEL_ENV_API_KEY",
+    AUTH_DOMAIN: "$VERCEL_ENV_AUTH_DOMAIN",
+    DATABASE_URL: "$VERCEL_ENV_DATABASE_URL",
+    PROJECT_ID: "$VERCEL_ENV_PROJECT_ID",
+    STORAGE_BUCKET: "$VERCEL_ENV_STORAGE_BUCKET",
+    MESSAGING_SENDER_ID: "$VERCEL_ENV_MESSAGING_SENDER_ID",
+    APP_ID: "$VERCEL_ENV_APP_ID"
+};
+EOF
 
-echo "Build complete: Files moved to public/ and placeholders replaced."
+echo "Build complete: public/config.js generated."
+ls -R public

@@ -169,19 +169,8 @@
         <h1>ShadowSwitch</h1>
     </header>
 
-    <script>
-        // These will be replaced by Vercel's Edge Middleware or 
-        // you can manually set them in the Vercel Dashboard.
-        window.CONFIG = {
-            API_KEY: "<!-- VERCEL_ENV_API_KEY -->",
-            AUTH_DOMAIN: "<!-- VERCEL_ENV_AUTH_DOMAIN -->",
-            DATABASE_URL: "<!-- VERCEL_ENV_DATABASE_URL -->",
-            PROJECT_ID: "<!-- VERCEL_ENV_PROJECT_ID -->",
-            STORAGE_BUCKET: "<!-- VERCEL_ENV_STORAGE_BUCKET -->",
-            MESSAGING_SENDER_ID: "<!-- VERCEL_ENV_MESSAGING_SENDER_ID -->",
-            APP_ID: "<!-- VERCEL_ENV_APP_ID -->"
-        };
-    </script>
+    <!-- Configuration injected by build script -->
+    <script src="config.js"></script>
 
     <div class="container">
         <div class="status-card">
