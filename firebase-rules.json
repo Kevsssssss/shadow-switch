@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "heartbeats": {
+      ".read": true,
+      "$machine_id": {
+        ".write": "auth != null" 
+      }
+    },
+    "commands": {
+      "$machine_id": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    }
+  }
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowSwitch | Cloud Controller</title>
+    <style>
+        :root {
+            --bg: #111112;
+            --surface: #1a1a1c;
+            --accent: #dd2c00;
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid var(--surface);
+        }
+
+        h1 {
+            color: var(--accent);
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        .status-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .status-info h2 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        #machine-selector {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--accent);
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-info p {
+            margin: 0.5rem 0 0;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-online { background: #2e7d32; color: #fff; }
+        .badge-offline { background: #c62828; color: #fff; }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--accent);
+            padding: 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--text-dim);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal h3 { margin-top: 0; color: var(--accent); }
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-actions button { flex: 1; }
+        .btn-cancel { border-color: var(--text-dim); }
+        .btn-cancel:hover { background: #333; }
+
+        @media (min-width: 480px) {
+            .controls {
+                grid-template-columns: 1fr 1fr;
+            }
+            .btn-full { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShadowSwitch</h1>
+    </header>
+
+    <script>
+        // These will be replaced by Vercel's Edge Middleware or 
+        // you can manually set them in the Vercel Dashboard.
+        window.CONFIG = {
+            API_KEY: "<!-- VERCEL_ENV_API_KEY -->",
+            AUTH_DOMAIN: "<!-- VERCEL_ENV_AUTH_DOMAIN -->",
+            DATABASE_URL: "<!-- VERCEL_ENV_DATABASE_URL -->",
+            PROJECT_ID: "<!-- VERCEL_ENV_PROJECT_ID -->",
+            STORAGE_BUCKET: "<!-- VERCEL_ENV_STORAGE_BUCKET -->",
+            MESSAGING_SENDER_ID: "<!-- VERCEL_ENV_MESSAGING_SENDER_ID -->",
+            APP_ID: "<!-- VERCEL_ENV_APP_ID -->"
+        };
+    </script>
+
+    <div class="container">
+        <div class="status-card">
+            <div class="status-info">
+                <select id="machine-selector" onchange="switchMachine()">
+                    <option value="target-machine-01">target-machine-01</option>
+                </select>
+                <p id="last-seen">Last seen: --:--</p>
+                <p id="local-ip">Local IP: --.--.--.--</p>
+            </div>
+            <div id="status-badge" class="badge badge-offline">Offline</div>
+        </div>
+
+        <div class="controls">
+            <button onclick="confirmAction('shutdown')">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+                Shutdown
+            </button>
+            <button onclick="confirmAction('restart')">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                Restart
+            </button>
+            <button onclick="executeAction('logout')" class="btn-full">
+                Log Out
+            </button>
+        </div>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <h3 id="modal-title">Confirm Action</h3>
+            <p id="modal-desc">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button id="modal-confirm" onclick="proceedAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
