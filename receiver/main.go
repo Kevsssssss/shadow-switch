@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path"
 	"runtime"
 	"strings"
 	"syscall"
@@ -31,7 +32,13 @@ func main() {
 		log.Fatal("ShadowSwitch Receiver is only supported on Windows.")
 	}
 
-	// Load .env file
+	// Try to load .env from the executable's directory
+	exePath, err := os.Executable()
+	if err == nil {
+		_ = godotenv.Load(path.Join(path.Dir(exePath), ".env"))
+	}
+	
+	// Fallback to current working directory
 	_ = godotenv.Load()
 
 	fmt.Println("ShadowSwitch Receiver starting...")
