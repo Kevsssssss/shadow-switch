@@ -93,12 +93,13 @@ function updateStatus(data) {
 
     console.log(`[Status Update] Now(ms): ${nowMs}, LastSeen(ms): ${lastSeenMs}, Diff: ${diff}s`);
 
-    // With Server Timestamps, the diff should be very small (near 0)
-    if (diff < 60 && diff > -60) {
+    // Use Absolute value so we don't care if the clock is ahead or behind.
+    // As long as the difference is less than 5 minutes (300s), mark it online.
+    if (Math.abs(diff) < 300) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
     } else {
-        console.log(`[Status Update] Machine marked offline due to diff: ${diff}s`);
+        console.log(`[Status Update] Machine marked offline due to large diff: ${diff}s`);
         setOffline();
     }
 
