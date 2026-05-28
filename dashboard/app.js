@@ -78,8 +78,14 @@ function switchMachine() {
 }
 
 function updateStatus(data) {
-    // Firebase Server Timestamps are in milliseconds
-    const lastSeenMs = data.last_seen;
+    let lastSeenMs = data.last_seen;
+    
+    // Auto-detect if the timestamp is in seconds (old Go code) or milliseconds (new Firebase Server Time)
+    // 10000000000 is the year 2286 in seconds, so anything below is definitely seconds.
+    if (lastSeenMs < 10000000000) {
+        lastSeenMs = lastSeenMs * 1000;
+    }
+
     const nowMs = Date.now();
     
     // Convert to seconds for the diff check
