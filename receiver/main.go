@@ -59,7 +59,6 @@ func main() {
 	os.Setenv("AUTH_TOKEN", authToken)
 
 	// Multi-machine support
-: Use OS username if MACHINE_ID is not set
 	machineID := getEnv("MACHINE_ID", "")
 	if machineID == "" {
 		currentUser, err := user.Current()
@@ -73,7 +72,7 @@ func main() {
 	}
 	os.Setenv("MACHINE_ID", machineID)
 	log.Printf("Machine Identified as: %s\n", machineID)
-	
+
 	localIP := getLocalIP()
 	port := getEnv("LAN_PORT", ":8080")
 	fmt.Printf("LAN Mode: Listening on http://%s%s\n", localIP, port)
@@ -193,7 +192,7 @@ func startHeartbeat() {
 func updateHeartbeat() {
 	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
 	url := fmt.Sprintf("%s/heartbeats/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
-	
+
 	// Use Firebase Server Timestamp placeholder
 	data := map[string]interface{}{
 		"last_seen": map[string]string{".sv": "timestamp"},
@@ -201,7 +200,7 @@ func updateHeartbeat() {
 		"ip":        getLocalIP(),
 	}
 	jsonData, _ := json.Marshal(data)
-	
+
 	req, _ := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(jsonData))
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
@@ -221,7 +220,7 @@ func updateHeartbeat() {
 func startFirebaseListener() {
 	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
 	url := fmt.Sprintf("%s/commands/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
-	
+
 	for {
 		log.Println("Connecting to Firebase stream...")
 		err := streamFirebase(url)
@@ -235,7 +234,7 @@ func startFirebaseListener() {
 func streamFirebase(url string) error {
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Accept", "text/event-stream")
-	
+
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -255,7 +254,7 @@ func streamFirebase(url string) error {
 			if dataStr == "null" {
 				continue
 			}
-			
+
 			var event map[string]interface{}
 			if err := json.Unmarshal([]byte(dataStr), &event); err != nil {
 				continue
@@ -273,7 +272,7 @@ func streamFirebase(url string) error {
 
 func handleFirebaseAction(action string) {
 	log.Printf("Firebase command received: %s\n", action)
-	
+
 	resetFirebaseCommand()
 
 	switch action {
