@@ -1,18 +1,20 @@
 // Firebase Configuration
-if (!window.CONFIG || !window.CONFIG.DATABASE_URL || window.CONFIG.DATABASE_URL.includes("VERCEL_ENV")) {
-    console.error("Firebase Config Missing or Invalid:", window.CONFIG);
-    alert("CRITICAL ERROR: Firebase Configuration was not injected. Check your Vercel Build Logs.");
-}
-
+// Since Vercel build scripts are failing, paste your credentials directly here.
+// DO NOT COMMIT this file if it contains real credentials in a public repo.
 const firebaseConfig = {
-    apiKey: window.CONFIG?.API_KEY || "",
-    authDomain: window.CONFIG?.AUTH_DOMAIN || "",
-    databaseURL: window.CONFIG?.DATABASE_URL || "",
-    projectId: window.CONFIG?.PROJECT_ID || "",
-    storageBucket: window.CONFIG?.STORAGE_BUCKET || "",
-    messagingSenderId: window.CONFIG?.MESSAGING_SENDER_ID || "",
-    appId: window.CONFIG?.APP_ID || ""
+    apiKey: "PASTE_YOUR_API_KEY_HERE",
+    authDomain: "PASTE_YOUR_AUTH_DOMAIN_HERE",
+    databaseURL: "PASTE_YOUR_DATABASE_URL_HERE",
+    projectId: "PASTE_YOUR_PROJECT_ID_HERE",
+    storageBucket: "PASTE_YOUR_STORAGE_BUCKET_HERE",
+    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID_HERE",
+    appId: "PASTE_YOUR_APP_ID_HERE"
 };
+
+// Check if credentials have been entered
+if (firebaseConfig.databaseURL.includes("PASTE_")) {
+    alert("CRITICAL ERROR: Please open dashboard/app.js and paste your Firebase credentials.");
+}
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
