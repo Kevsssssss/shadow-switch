@@ -24,18 +24,18 @@ if (fs.existsSync(envPath)) {
 
 // Grab variables from process.env (which now includes Vercel's vars OR our local .env)
 const config = {
-    API_KEY: process.env.VERCEL_ENV_API_KEY || "",
-    AUTH_DOMAIN: process.env.VERCEL_ENV_AUTH_DOMAIN || "",
-    DATABASE_URL: process.env.VERCEL_ENV_DATABASE_URL || "",
-    PROJECT_ID: process.env.VERCEL_ENV_PROJECT_ID || "",
-    STORAGE_BUCKET: process.env.VERCEL_ENV_STORAGE_BUCKET || "",
-    MESSAGING_SENDER_ID: process.env.VERCEL_ENV_MESSAGING_SENDER_ID || "",
-    APP_ID: process.env.VERCEL_ENV_APP_ID || ""
+    API_KEY: process.env.FIREBASE_API_KEY || process.env.VERCEL_ENV_API_KEY || "",
+    AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN || process.env.VERCEL_ENV_AUTH_DOMAIN || "",
+    DATABASE_URL: process.env.FIREBASE_DATABASE_URL || process.env.VERCEL_ENV_DATABASE_URL || "",
+    PROJECT_ID: process.env.FIREBASE_PROJECT_ID || process.env.VERCEL_ENV_PROJECT_ID || "",
+    STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET || process.env.VERCEL_ENV_STORAGE_BUCKET || "",
+    MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VERCEL_ENV_MESSAGING_SENDER_ID || "",
+    APP_ID: process.env.FIREBASE_APP_ID || process.env.VERCEL_ENV_APP_ID || ""
 };
 
 // Check if variables are missing
 if (!config.DATABASE_URL) {
-    console.error("⚠️ WARNING: VERCEL_ENV_DATABASE_URL is missing during build!");
+    console.error("⚠️ WARNING: FIREBASE_DATABASE_URL is missing during build!");
 } else {
     console.log("✅ Environment variables found securely.");
 }
