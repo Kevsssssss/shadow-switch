@@ -2,19 +2,8 @@
 
 echo "Starting robust build process..."
 
-# Diagnostic: Check if variables exist (printing only lengths for security)
-echo "DIAGNOSTIC: API_KEY length is ${#VERCEL_ENV_API_KEY}"
-echo "DIAGNOSTIC: DATABASE_URL length is ${#VERCEL_ENV_DATABASE_URL}"
-
-# Create public directory
-mkdir -p public
-
-# Copy static assets
-cp index.html public/
-cp app.js public/
-
-# Generate config.js dynamically
-cat <<EOF > public/config.js
+# Generate config.js dynamically in the CURRENT folder
+cat <<EOF > config.js
 window.CONFIG = {
     API_KEY: "$VERCEL_ENV_API_KEY",
     AUTH_DOMAIN: "$VERCEL_ENV_AUTH_DOMAIN",
@@ -26,5 +15,5 @@ window.CONFIG = {
 };
 EOF
 
-echo "Build complete: public/config.js generated."
-ls -la public
+echo "Build complete: config.js generated."
+ls -la
