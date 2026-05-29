@@ -26,7 +26,7 @@ const localIpText = document.getElementById('local-ip');
 const mainContent = document.getElementById('main-content');
 const loginOverlay = document.getElementById('login-overlay');
 const settingsOverlay = document.getElementById('settings-overlay');
-const openSettingsBtn = document.getElementById('open-settings-btn');
+const headerActions = document.getElementById('header-actions');
 const removeBtn = document.getElementById('remove-btn');
 const modalOverlay = document.getElementById('modal-overlay');
 const modalTitle = document.getElementById('modal-title');
@@ -35,6 +35,19 @@ const modalDesc = document.getElementById('modal-desc');
 let currentMachineID = "";
 let pendingAction = null;
 let statusListener = null;
+let lastKnownData = null;
+
+// --- Security Utils ---
+
+// Simple SHA-256 implementation using Web Crypto API
+async function hashCreds(username, password) {
+    const msg = `${username.trim()}:${password}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(msg);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 // --- Authentication Logic ---
 
@@ -42,16 +55,22 @@ async function handleLogin() {
     const userIn = document.getElementById('login-user').value;
     const passIn = document.getElementById('login-pass').value;
 
+    if (!userIn || !passIn) return alert("Please fill in both fields.");
+
     const snapshot = await db.ref('admin_config').get();
     let config = snapshot.val();
 
-    // Initialize with defaults if empty
-    if (!config) {
-        config = { user: "admin", pass: "Password123" };
-        await db.ref('admin_config').set(config);
+    // Default Hashed Value for admin : Password123
+    const defaultHash = "41506544066046e7f23c9a633f8151f7b0f697920194412f716616422d3e4010";
+
+    if (!config || !config.hashed_key) {
+        await db.ref('admin_config').set({ hashed_key: defaultHash });
+        config = { hashed_key: defaultHash };
     }
 
-    if (userIn === config.user && passIn === config.pass) {
+    const inputHash = await hashCreds(userIn, passIn);
+
+    if (inputHash === config.hashed_key) {
         localStorage.setItem('ss_session', 'active');
         showDashboard();
     } else {
@@ -62,13 +81,20 @@ async function handleLogin() {
 function showDashboard() {
     loginOverlay.style.display = 'none';
     mainContent.style.display = 'block';
-    openSettingsBtn.style.display = 'block';
+    headerActions.style.display = 'flex';
     initDashboard();
 }
 
 function checkSession() {
     if (localStorage.getItem('ss_session') === 'active') {
         showDashboard();
+    }
+}
+
+function logoutDashboard() {
+    if (confirm("Are you sure you want to logout from the dashboard?")) {
+        localStorage.removeItem('ss_session');
+        window.location.reload();
     }
 }
 
@@ -85,11 +111,17 @@ function closeSettings() {
 async function saveSettings() {
     const newUser = document.getElementById('new-user').value;
     const newPass = document.getElementById('new-pass').value;
+    const confirmPass = document.getElementById('confirm-pass').value;
 
-    if (!newUser || !newPass) return alert("Please fill in both fields.");
+    if (!newUser || !newPass) return alert("Please fill in all fields.");
+    
+    if (newPass !== confirmPass) {
+        return alert("Passwords do not match!");
+    }
 
-    if (confirm("Are you sure? You will need to login again with new credentials.")) {
-        await db.ref('admin_config').set({ user: newUser, pass: newPass });
+    if (confirm("Are you sure? This will update the hashed key in Firebase. You will need to login again.")) {
+        const newHash = await hashCreds(newUser, newPass);
+        await db.ref('admin_config').set({ hashed_key: newHash });
         localStorage.removeItem('ss_session');
         window.location.reload();
     }
@@ -109,7 +141,6 @@ async function deleteMachine() {
 // --- Dashboard Logic ---
 
 function initDashboard() {
-    // Listen for all heartbeats to populate the selector
     db.ref('heartbeats').on('value', (snapshot) => {
         const heartbeats = snapshot.val();
         if (!heartbeats) {
@@ -151,12 +182,13 @@ function switchMachine() {
     }
 
     currentMachineID = newID;
+    lastKnownData = null;
     console.log(`Switched to machine: ${currentMachineID}`);
 
     statusListener = db.ref(`heartbeats/${currentMachineID}`).on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            updateStatus(data);
+        lastKnownData = snapshot.val();
+        if (lastKnownData) {
+            updateStatus(lastKnownData);
         } else {
             setOffline();
         }
@@ -164,14 +196,14 @@ function switchMachine() {
 }
 
 function updateStatus(data) {
+    if (!data) return;
     let lastSeenMs = data.last_seen;
     if (lastSeenMs < 10000000000) lastSeenMs *= 1000;
 
     const nowMs = Date.now();
     const diff = Math.floor((nowMs - lastSeenMs) / 1000);
 
-    // Allowing 60s drift for "Online" status
-    if (Math.abs(diff) < 60) {
+    if (Math.abs(diff) < 30) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
     } else {
@@ -187,6 +219,12 @@ function setOffline() {
     badge.className = 'badge badge-offline';
     badge.textContent = 'Offline';
 }
+
+setInterval(() => {
+    if (lastKnownData && currentMachineID) {
+        updateStatus(lastKnownData);
+    }
+}, 5000);
 
 function confirmAction(action) {
     if (!currentMachineID) return alert("Select a machine first");
@@ -228,5 +266,4 @@ function executeAction(action) {
         });
 }
 
-// Start session check
 checkSession();

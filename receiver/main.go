@@ -175,10 +175,10 @@ func handleAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func startHeartbeat() {
-	intervalStr := getEnv("HEARTBEAT_INTERVAL", "30s")
+	intervalStr := getEnv("HEARTBEAT_INTERVAL", "15s")
 	interval, err := time.ParseDuration(intervalStr)
 	if err != nil {
-		interval = 30 * time.Second
+		interval = 15 * time.Second
 	}
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
