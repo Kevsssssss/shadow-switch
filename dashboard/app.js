@@ -105,7 +105,8 @@ function checkSession() {
 // --- Settings Logic ---
 
 function downloadReceiver() {
-    const downloadUrl = "https://github.com/Kevsssssss/shadow-switch/releases/download/v1.0.0/receiver.exe";
+    // const downloadUrl = "https://github.com/Kevsssssss/shadow-switch/releases/download/v1.0.0/receiver.exe";
+    const downloadUrl = "https://www.dropbox.com/scl/fi/y6yu0qw3a34q3qm1d84cc/receiver.exe?rlkey=r48740agxsxhlpp4rgbho1mc5&e=1&st=wwnv8tyh&dl=0"
     const link = document.createElement('a');
     link.href = downloadUrl;
     link.download = "receiver.exe";
