@@ -57,24 +57,29 @@ async function handleLogin() {
 
     if (!userIn || !passIn) return alert("Please fill in both fields.");
 
-    const snapshot = await db.ref('admin_config').get();
-    let config = snapshot.val();
+    try {
+        const snapshot = await db.ref('admin_config').get();
+        let config = snapshot.val();
 
-    // Default Hashed Value for admin : Password123
-    const defaultHash = "0da12d837ccae2ae46d6a5ea7bc98fe5ce790208b6e305a591f59f24b62db6c1";
+        // Default Hashed Value for admin : Password123
+        const defaultHash = "0da12d837ccae2ae46d6a5ea7bc98fe5ce790208b6e305a591f59f24b62db6c1";
 
-    if (!config || !config.hashed_key) {
-        await db.ref('admin_config').set({ hashed_key: defaultHash });
-        config = { hashed_key: defaultHash };
-    }
+        if (!config || !config.hashed_key) {
+            await db.ref('admin_config').set({ hashed_key: defaultHash });
+            config = { hashed_key: defaultHash };
+        }
 
-    const inputHash = await hashCreds(userIn, passIn);
+        const inputHash = await hashCreds(userIn, passIn);
 
-    if (inputHash === config.hashed_key) {
-        localStorage.setItem('ss_session', 'active');
-        showDashboard();
-    } else {
-        alert("Invalid credentials.");
+        if (inputHash === config.hashed_key) {
+            localStorage.setItem('ss_session', 'active');
+            showDashboard();
+        } else {
+            alert("Invalid credentials.");
+        }
+    } catch (error) {
+        console.error("Login Error:", error);
+        alert("System Error: " + error.message + "\nCheck browser console for details.");
     }
 }
 
