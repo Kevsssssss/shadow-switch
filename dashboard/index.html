@@ -24,48 +24,56 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* ── Header ── */
         header {
             width: 100%;
-            padding: 1.5rem 0;
-            text-align: center;
+            padding: 1.2rem 1rem;
             border-bottom: 1px solid var(--surface);
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
         }
 
         h1 {
             color: var(--accent);
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             letter-spacing: 2px;
             text-transform: uppercase;
+            padding: 0 52px;
+            text-align: center;
         }
 
         .header-actions {
             position: absolute;
             top: 50%;
-            right: 20px;
+            right: 12px;
             transform: translateY(-50%);
             display: flex;
             align-items: center;
         }
 
+        /* Desktop: inline buttons */
         .nav-drawer {
             display: flex;
             gap: 0.4rem;
         }
 
+        /* Hamburger — hidden on desktop */
         .hamburger {
             display: none;
             background: none;
             border: none;
             color: var(--text);
             cursor: pointer;
-            padding: 0;
-            z-index: 901;
+            padding: 4px;
+            line-height: 0;
         }
-
         .hamburger:hover { color: var(--accent); }
 
         .header-btn {
@@ -86,21 +94,21 @@
             white-space: nowrap;
             transform: none !important;
         }
-
         .header-btn:hover {
             border-color: var(--accent);
             color: var(--text);
             background: rgba(221, 44, 0, 0.08);
         }
-
         .header-btn svg { flex-shrink: 0; }
 
+        /* ── Main container ── */
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 600px;
-            margin-top: 2rem;
+            padding: 2rem 1rem;
         }
 
+        /* ── Status Card ── */
         .status-card {
             background: var(--surface);
             padding: 1.5rem;
@@ -108,11 +116,12 @@
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            gap: 1rem;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .status-info { flex-grow: 1; width: 100%; }
+        .status-info { flex: 1; min-width: 0; }
         .status-info h2 { margin: 0; font-size: 1.1rem; }
 
         #machine-selector {
@@ -131,6 +140,8 @@
             margin: 0.5rem 0 0;
             color: var(--text-dim);
             font-size: 0.9rem;
+            overflow-wrap: break-word;
+            word-break: break-all;
         }
 
         .badge {
@@ -139,8 +150,10 @@
             font-size: 0.75rem;
             font-weight: bold;
             text-transform: uppercase;
+            flex-shrink: 0;
+            align-self: flex-start;
+            white-space: nowrap;
         }
-
         .badge-online  { background: #2e7d32; color: #fff; }
         .badge-offline { background: #c62828; color: #fff; }
 
@@ -156,9 +169,10 @@
         }
         .btn-remove:hover { border-color: var(--accent); color: #fff; }
 
+        /* ── Control Buttons ── */
         .controls {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
 
@@ -177,7 +191,6 @@
             justify-content: center;
             gap: 0.5rem;
         }
-
         button:hover { background: var(--accent); transform: translateY(-2px); }
         button:active { transform: translateY(0); }
         button:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--text-dim); pointer-events: none; }
@@ -191,15 +204,21 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            overflow-y: auto;
+            padding: 1rem;
         }
 
+        /* ── Modal ── */
         .modal {
             background: var(--surface);
             padding: 2rem;
             border-radius: 10px;
-            width: 90%;
+            width: 100%;
             max-width: 420px;
             text-align: center;
+            max-height: calc(100vh - 2rem);
+            overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .modal h3 {
@@ -219,7 +238,6 @@
             border-radius: 5px;
             font-size: 0.9rem;
         }
-
         .modal input:focus {
             border-color: var(--accent);
             outline: none;
@@ -237,12 +255,11 @@
             gap: 0.75rem;
             margin-top: 1.5rem;
         }
-
         .modal-actions button { flex: 1; padding: 0.85rem; font-size: 0.9rem; }
         .btn-cancel { border-color: #2a2a2c; color: var(--text-dim); }
         .btn-cancel:hover { background: #222224; transform: none; }
 
-        /* ── Download panel inside its own modal ── */
+        /* ── Download modal ── */
         .download-modal .setup-box {
             background: var(--bg);
             border-radius: 6px;
@@ -251,21 +268,18 @@
             margin-top: 1rem;
             font-size: 0.82rem;
         }
-
         .download-modal .setup-box ol {
             margin: 0.6rem 0 0 1.1rem;
             padding: 0;
             color: var(--text-dim);
             line-height: 1.7;
         }
-
         .download-modal .setup-box code {
             background: #2a2a2c;
             padding: 0.1rem 0.35rem;
             border-radius: 3px;
             font-size: 0.8rem;
         }
-
         .btn-download {
             width: 100%;
             background: #1b4d1e !important;
@@ -273,35 +287,73 @@
             color: #fff !important;
             margin-bottom: 0;
         }
-
         .btn-download:hover { background: #2e7d32 !important; }
 
-        @media (max-width: 480px) {
-            .status-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .badge { align-self: flex-end; }
-            
+        /* ── Mobile popup menu ── */
+        .popup-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: var(--surface);
+            border: 1px solid #2a2a2c;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            z-index: 902;
+            min-width: 160px;
+            overflow: hidden;
+        }
+        .popup-menu.open {
+            display: block;
+        }
+        .popup-menu .header-btn {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #222224;
+            border-radius: 0;
+            padding: 0.8rem 1rem;
+            font-size: 0.85rem;
+            justify-content: flex-start;
+        }
+        .popup-menu .header-btn:last-child {
+            border-bottom: none;
+        }
+        .popup-menu .header-btn:hover {
+            background: rgba(221,44,0,0.12);
+            border-color: transparent;
+        }
+
+        /* Wrapper for hamburger + popup — needed for relative positioning */
+        .mobile-menu-wrapper {
+            display: none;
+            position: relative;
+        }
+
+        /* ── Mobile breakpoint ── */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.1rem; letter-spacing: 1px; }
+
+            /* Hide desktop inline nav, show mobile popup wrapper */
+            .nav-drawer { display: none; }
             .hamburger { display: block; }
-            
-            .nav-drawer {
-                position: fixed;
-                top: 0;
-                right: -350px;
-                width: 240px;
-                height: 100vh;
-                background: var(--surface);
+            .mobile-menu-wrapper { display: block; }
+
+            /* Status card stacks */
+            .status-card {
                 flex-direction: column;
-                align-items: stretch;
-                padding: 4.5rem 1.5rem 2rem;
-                gap: 1rem;
-                transition: right 0.3s ease;
-                z-index: 900;
-                border-left: 1px solid #2a2a2c;
-                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+                align-items: flex-start;
             }
-            
-            .nav-drawer.open {
-                right: -20px;
+            .badge { align-self: flex-start; }
+
+            /* Single-column controls */
+            .controls { grid-template-columns: 1fr; }
+
+            /* Modal tweaks */
+            .modal {
+                padding: 1.5rem 1.25rem;
+                max-height: calc(100dvh - 2rem);
             }
+            .modal-actions { flex-direction: column; }
         }
 
         @media (min-width: 480px) {
@@ -315,31 +367,43 @@
         <h1>ShadowSwitch</h1>
         <div class="header-actions" id="header-actions" style="display:none;">
 
-            <button id="hamburger-btn" class="hamburger" onclick="toggleMenu()" title="Menu">
-                <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-            </button>
-
+            <!-- Desktop inline buttons -->
             <div class="nav-drawer" id="nav-drawer">
-
-                <!-- Download button -->
-                <button class="header-btn" title="Download Receiver" onclick="openDownload()">
+                <button class="header-btn" onclick="openDownload()">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
                     <span>Download</span>
                 </button>
-
-                <!-- Settings / credentials button -->
-                <button class="header-btn" title="Update Admin Credentials" onclick="openSettings()">
+                <button class="header-btn" onclick="openSettings()">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                     <span>Settings</span>
                 </button>
-
-                <!-- Logout button -->
-                <button class="header-btn" title="Logout Dashboard" onclick="logoutDashboard()">
+                <button class="header-btn" onclick="logoutDashboard()">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
                     <span>Logout</span>
                 </button>
-
             </div>
+
+            <!-- Mobile hamburger + popup -->
+            <div class="mobile-menu-wrapper">
+                <button class="hamburger" id="hamburger-btn" onclick="toggleMenu()" aria-label="Open menu">
+                    <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+                </button>
+                <div class="popup-menu" id="popup-menu">
+                    <button class="header-btn" onclick="openDownload()">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        <span>Download</span>
+                    </button>
+                    <button class="header-btn" onclick="openSettings()">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                        <span>Settings</span>
+                    </button>
+                    <button class="header-btn" onclick="logoutDashboard()">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+
         </div>
     </header>
 
@@ -440,18 +504,35 @@
 
     <script>
         function toggleMenu() {
-            const drawer = document.getElementById('nav-drawer');
-            const backdrop = document.getElementById('menu-backdrop');
-            const isOpen = drawer.classList.toggle('open');
-            backdrop.style.display = isOpen ? 'block' : 'none';
+            const menu = document.getElementById('popup-menu');
+            menu.classList.toggle('open');
         }
 
-        function openDownload()  { toggleMenu(); document.getElementById('download-overlay').style.display = 'flex'; }
+        function closeMenu() {
+            document.getElementById('popup-menu').classList.remove('open');
+        }
+
+        // Close popup when tapping anywhere outside it
+        document.addEventListener('click', function(e) {
+            const wrapper = document.querySelector('.mobile-menu-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+
+        function openDownload()  { closeMenu(); document.getElementById('download-overlay').style.display = 'flex'; }
         function closeDownload() { document.getElementById('download-overlay').style.display = 'none'; }
-        function openSettings()  { toggleMenu(); document.getElementById('settings-overlay').style.display = 'flex'; }
+
+        function openSettings()  { closeMenu(); document.getElementById('settings-overlay').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
+
         function logoutDashboard() {
-            toggleMenu();
+            closeMenu();
             if (confirm("Are you sure you want to logout from the dashboard?")) {
                 localStorage.removeItem('ss_session');
                 window.location.reload();
@@ -462,6 +543,5 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <script src="app.js"></script>
-    <div id="menu-backdrop" onclick="toggleMenu()" style="display:none; position:fixed; inset:0; z-index:899;"></div>
 </body>
 </html>
