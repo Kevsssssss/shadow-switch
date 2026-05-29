@@ -23,6 +23,11 @@ const machineSelector = document.getElementById('machine-selector');
 const badge = document.getElementById('status-badge');
 const lastSeenText = document.getElementById('last-seen');
 const localIpText = document.getElementById('local-ip');
+const mainContent = document.getElementById('main-content');
+const loginOverlay = document.getElementById('login-overlay');
+const settingsOverlay = document.getElementById('settings-overlay');
+const openSettingsBtn = document.getElementById('open-settings-btn');
+const removeBtn = document.getElementById('remove-btn');
 const modalOverlay = document.getElementById('modal-overlay');
 const modalTitle = document.getElementById('modal-title');
 const modalDesc = document.getElementById('modal-desc');
@@ -31,34 +36,116 @@ let currentMachineID = "";
 let pendingAction = null;
 let statusListener = null;
 
-// Listen for all heartbeats to populate the selector
-db.ref('heartbeats').on('value', (snapshot) => {
-    const heartbeats = snapshot.val();
-    if (!heartbeats) return;
+// --- Authentication Logic ---
 
-    const currentSelection = machineSelector.value;
-    machineSelector.innerHTML = "";
-    
-    Object.keys(heartbeats).forEach(id => {
-        const option = document.createElement('option');
-        option.value = id;
-        option.textContent = id;
-        machineSelector.appendChild(option);
-    });
+async function handleLogin() {
+    const userIn = document.getElementById('login-user').value;
+    const passIn = document.getElementById('login-pass').value;
 
-    // Restore selection or pick first
-    if (heartbeats[currentSelection]) {
-        machineSelector.value = currentSelection;
-    } else if (!currentMachineID && Object.keys(heartbeats).length > 0) {
-        switchMachine();
+    const snapshot = await db.ref('admin_config').get();
+    let config = snapshot.val();
+
+    // Initialize with defaults if empty
+    if (!config) {
+        config = { user: "admin", pass: "Password123" };
+        await db.ref('admin_config').set(config);
     }
-});
+
+    if (userIn === config.user && passIn === config.pass) {
+        localStorage.setItem('ss_session', 'active');
+        showDashboard();
+    } else {
+        alert("Invalid credentials.");
+    }
+}
+
+function showDashboard() {
+    loginOverlay.style.display = 'none';
+    mainContent.style.display = 'block';
+    openSettingsBtn.style.display = 'block';
+    initDashboard();
+}
+
+function checkSession() {
+    if (localStorage.getItem('ss_session') === 'active') {
+        showDashboard();
+    }
+}
+
+// --- Settings Logic ---
+
+function openSettings() {
+    settingsOverlay.style.display = 'flex';
+}
+
+function closeSettings() {
+    settingsOverlay.style.display = 'none';
+}
+
+async function saveSettings() {
+    const newUser = document.getElementById('new-user').value;
+    const newPass = document.getElementById('new-pass').value;
+
+    if (!newUser || !newPass) return alert("Please fill in both fields.");
+
+    if (confirm("Are you sure? You will need to login again with new credentials.")) {
+        await db.ref('admin_config').set({ user: newUser, pass: newPass });
+        localStorage.removeItem('ss_session');
+        window.location.reload();
+    }
+}
+
+async function deleteMachine() {
+    if (!currentMachineID) return;
+    
+    if (confirm(`Are you sure you want to permanently remove ${currentMachineID} from the registry?`)) {
+        await db.ref(`heartbeats/${currentMachineID}`).remove();
+        await db.ref(`commands/${currentMachineID}`).remove();
+        alert(`${currentMachineID} removed.`);
+        window.location.reload();
+    }
+}
+
+// --- Dashboard Logic ---
+
+function initDashboard() {
+    // Listen for all heartbeats to populate the selector
+    db.ref('heartbeats').on('value', (snapshot) => {
+        const heartbeats = snapshot.val();
+        if (!heartbeats) {
+            machineSelector.innerHTML = '<option value="">No machines found</option>';
+            removeBtn.style.display = 'none';
+            setOffline();
+            return;
+        }
+
+        const currentSelection = machineSelector.value;
+        machineSelector.innerHTML = "";
+        
+        Object.keys(heartbeats).forEach(id => {
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = id;
+            machineSelector.appendChild(option);
+        });
+
+        if (heartbeats[currentSelection]) {
+            machineSelector.value = currentSelection;
+        } else if (!currentMachineID && Object.keys(heartbeats).length > 0) {
+            switchMachine();
+        }
+    });
+}
 
 function switchMachine() {
     const newID = machineSelector.value;
-    if (!newID) return;
+    if (!newID) {
+        removeBtn.style.display = 'none';
+        return;
+    }
 
-    // Remove old listener
+    removeBtn.style.display = 'inline-block';
+
     if (statusListener) {
         db.ref(`heartbeats/${currentMachineID}`).off('value', statusListener);
     }
@@ -66,7 +153,6 @@ function switchMachine() {
     currentMachineID = newID;
     console.log(`Switched to machine: ${currentMachineID}`);
 
-    // Add new listener
     statusListener = db.ref(`heartbeats/${currentMachineID}`).on('value', (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -79,27 +165,16 @@ function switchMachine() {
 
 function updateStatus(data) {
     let lastSeenMs = data.last_seen;
-    
-    // Auto-detect if the timestamp is in seconds (old Go code) or milliseconds (new Firebase Server Time)
-    // 10000000000 is the year 2286 in seconds, so anything below is definitely seconds.
-    if (lastSeenMs < 10000000000) {
-        lastSeenMs = lastSeenMs * 1000;
-    }
+    if (lastSeenMs < 10000000000) lastSeenMs *= 1000;
 
     const nowMs = Date.now();
-    
-    // Convert to seconds for the diff check
     const diff = Math.floor((nowMs - lastSeenMs) / 1000);
 
-    console.log(`[Status Update] Now(ms): ${nowMs}, LastSeen(ms): ${lastSeenMs}, Diff: ${diff}s`);
-
-    // Use Absolute value so we don't care if the clock is ahead or behind.
-    // As long as the difference is less than 5 seconds (5s), mark it online.
-    if (Math.abs(diff) < 5) {
+    // Allowing 60s drift for "Online" status
+    if (Math.abs(diff) < 60) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
     } else {
-        console.log(`[Status Update] Machine marked offline due to large diff: ${diff}s`);
         setOffline();
     }
 
@@ -152,3 +227,6 @@ function executeAction(action) {
             }, 3000);
         });
 }
+
+// Start session check
+checkSession();
