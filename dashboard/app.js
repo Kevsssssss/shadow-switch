@@ -36,6 +36,12 @@ let currentMachineID = "";
 let pendingAction = null;
 let statusListener = null;
 let lastKnownData = null;
+let serverTimeOffset = 0;
+
+// Track Server Time Offset to handle local clock skew
+db.ref(".info/serverTimeOffset").on("value", (snap) => {
+    serverTimeOffset = snap.val() || 0;
+});
 
 // --- Security Utils ---
 
