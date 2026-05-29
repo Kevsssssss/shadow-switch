@@ -153,14 +153,18 @@ function initDashboard() {
         if (!heartbeats) {
             machineSelector.innerHTML = '<option value="">No machines found</option>';
             removeBtn.style.display = 'none';
+            currentMachineID = "";
+            lastKnownData = null;
             setOffline();
+            lastSeenText.textContent = "Last seen: --:--";
+            localIpText.textContent = "Local IP: --.--.--.--";
             return;
         }
 
-        const currentSelection = machineSelector.value;
-        machineSelector.innerHTML = "";
-        
+        const previousSelection = currentMachineID;
         const ids = Object.keys(heartbeats);
+        
+        machineSelector.innerHTML = "";
         ids.forEach(id => {
             const option = document.createElement('option');
             option.value = id;
@@ -168,13 +172,13 @@ function initDashboard() {
             machineSelector.appendChild(option);
         });
 
-        // Auto-select first machine if none selected or current is gone
-        if (currentSelection && heartbeats[currentSelection]) {
-            machineSelector.value = currentSelection;
-        } else {
-            console.log("Auto-selecting machine:", ids[0]);
+        // If our current machine was deleted and then came back, or if we have none selected
+        if (!currentMachineID || !heartbeats[currentMachineID]) {
+            console.log("Machine list changed. Picking:", ids[0]);
             machineSelector.value = ids[0];
             switchMachine();
+        } else {
+            machineSelector.value = currentMachineID;
         }
     });
 }
