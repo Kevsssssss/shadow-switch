@@ -148,6 +148,8 @@ async function deleteMachine() {
 function initDashboard() {
     db.ref('heartbeats').on('value', (snapshot) => {
         const heartbeats = snapshot.val();
+        console.log("Heartbeats Snapshot:", heartbeats);
+        
         if (!heartbeats) {
             machineSelector.innerHTML = '<option value="">No machines found</option>';
             removeBtn.style.display = 'none';
@@ -158,16 +160,20 @@ function initDashboard() {
         const currentSelection = machineSelector.value;
         machineSelector.innerHTML = "";
         
-        Object.keys(heartbeats).forEach(id => {
+        const ids = Object.keys(heartbeats);
+        ids.forEach(id => {
             const option = document.createElement('option');
             option.value = id;
             option.textContent = id;
             machineSelector.appendChild(option);
         });
 
-        if (heartbeats[currentSelection]) {
+        // Auto-select first machine if none selected or current is gone
+        if (currentSelection && heartbeats[currentSelection]) {
             machineSelector.value = currentSelection;
-        } else if (!currentMachineID && Object.keys(heartbeats).length > 0) {
+        } else {
+            console.log("Auto-selecting machine:", ids[0]);
+            machineSelector.value = ids[0];
             switchMachine();
         }
     });
@@ -192,6 +198,7 @@ function switchMachine() {
 
     statusListener = db.ref(`heartbeats/${currentMachineID}`).on('value', (snapshot) => {
         lastKnownData = snapshot.val();
+        console.log(`Status update for ${currentMachineID}:`, lastKnownData);
         if (lastKnownData) {
             updateStatus(lastKnownData);
         } else {
@@ -202,13 +209,22 @@ function switchMachine() {
 
 function updateStatus(data) {
     if (!data) return;
+    
     let lastSeenMs = data.last_seen;
+    if (typeof lastSeenMs !== 'number') {
+        console.warn("last_seen is not a number:", lastSeenMs);
+        return;
+    }
+    
+    // Firebase timestamps are in ms.
     if (lastSeenMs < 10000000000) lastSeenMs *= 1000;
 
-    const nowMs = Date.now();
-    const diff = Math.floor((nowMs - lastSeenMs) / 1000);
+    const adjustedNow = Date.now() + serverTimeOffset;
+    const diffSeconds = Math.floor((adjustedNow - lastSeenMs) / 1000);
 
-    if (Math.abs(diff) < 30) {
+    console.log(`Time Diff: ${diffSeconds}s (Adjusted Now: ${adjustedNow}, Last Seen: ${lastSeenMs})`);
+
+    if (diffSeconds >= 0 && diffSeconds < 45) {
         badge.className = 'badge badge-online';
         badge.textContent = 'Online';
     } else {
