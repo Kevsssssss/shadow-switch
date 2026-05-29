@@ -193,7 +193,9 @@ func startHeartbeat() {
 
 func updateHeartbeat() {
 	firebaseURL := strings.TrimRight(os.Getenv("FIREBASE_URL"), "/")
-	url := fmt.Sprintf("%s/heartbeats/%s.json?auth=%s", firebaseURL, os.Getenv("MACHINE_ID"), os.Getenv("FIREBASE_SECRET"))
+	machineID := os.Getenv("MACHINE_ID")
+	secret := os.Getenv("FIREBASE_SECRET")
+	url := fmt.Sprintf("%s/heartbeats/%s.json?auth=%s", firebaseURL, machineID, secret)
 
 	// Use Firebase Server Timestamp placeholder
 	data := map[string]interface{}{
@@ -203,19 +205,24 @@ func updateHeartbeat() {
 	}
 	jsonData, _ := json.Marshal(data)
 
-	req, _ := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(http.MethodPut, url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Printf("[Heartbeat] Request Creation Error: %v\n", err)
+		return
+	}
+	
 	client := &http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Printf("[Heartbeat] Network Error: %v\n", err)
+		log.Printf("[Heartbeat] Network Error: %v (URL: %s)\n", err, firebaseURL)
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Printf("[Heartbeat] Firebase Rejected (Status %d). Check your Secret/URL.\n", resp.StatusCode)
+		log.Printf("[Heartbeat] Firebase Rejected (Status %d) for Machine: %s. Check your Secret/URL.\n", resp.StatusCode, machineID)
 	} else {
-		log.Printf("[Heartbeat] Success sent for %s\n", os.Getenv("MACHINE_ID"))
+		log.Printf("[Heartbeat] Success sent for %s (IP: %s)\n", machineID, data["ip"])
 	}
 }
 
