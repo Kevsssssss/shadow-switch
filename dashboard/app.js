@@ -229,7 +229,7 @@ setInterval(() => {
     if (lastKnownData && currentMachineID) {
         updateStatus(lastKnownData);
     }
-}, 5000);
+}, 2000);
 
 function confirmAction(action) {
     if (!currentMachineID) return alert("Select a machine first");
