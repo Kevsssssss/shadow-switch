@@ -61,7 +61,7 @@ async function handleLogin() {
     let config = snapshot.val();
 
     // Default Hashed Value for admin : Password123
-    const defaultHash = "41506544066046e7f23c9a633f8151f7b0f697920194412f716616422d3e4010";
+    const defaultHash = "0da12d837ccae2ae46d6a5ea7bc98fe5ce790208b6e305a591f59f24b62db6c1";
 
     if (!config || !config.hashed_key) {
         await db.ref('admin_config').set({ hashed_key: defaultHash });

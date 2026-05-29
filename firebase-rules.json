@@ -1,5 +1,9 @@
 {
   "rules": {
+    "admin_config": {
+      ".read": true,
+      ".write": true
+    },
     "heartbeats": {
       ".read": true,
       "$machine_id": {

@@ -54,6 +54,7 @@ The Go executable uses non-blocking goroutines to parallel-process:
   - Shutdown: `shutdown /s /t 0 /f`
   - Restart: `shutdown /r /t 0 /f`
   - Log Out: `shutdown /l`
+  - Lock: `rundll32.exe user32.dll LockWorkStation`
 - **Atomic State Reset:** After reading a command from Firebase, immediately write `null` back to that node to prevent re-execution on reboot.
 
 ### Cloud Controller Dashboard
