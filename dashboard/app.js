@@ -119,6 +119,18 @@ function closeSettings() {
     settingsOverlay.style.display = 'none';
 }
 
+function downloadReceiver() {
+    // Assuming the binary is hosted at the root of the same domain or a specific path
+    // For Vercel, you can place receiver.exe in the 'public' folder or similar
+    const downloadUrl = "/receiver.exe";
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = "receiver.exe";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 async function saveSettings() {
     const newUser = document.getElementById('new-user').value;
     const newPass = document.getElementById('new-pass').value;
