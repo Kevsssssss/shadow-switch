@@ -48,10 +48,28 @@
             right: 20px;
             transform: translateY(-50%);
             display: flex;
+            align-items: center;
+        }
+
+        .nav-drawer {
+            display: flex;
             gap: 0.4rem;
         }
 
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 0;
+            z-index: 901;
+        }
+
+        .hamburger:hover { color: var(--accent); }
+
         .header-btn {
+            all: revert;
             background: none;
             border: 1px solid #2a2a2c;
             color: var(--text-dim);
@@ -66,6 +84,7 @@
             letter-spacing: 0.3px;
             transition: all 0.15s;
             white-space: nowrap;
+            transform: none !important;
         }
 
         .header-btn:hover {
@@ -161,7 +180,7 @@
 
         button:hover { background: var(--accent); transform: translateY(-2px); }
         button:active { transform: translateY(0); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--text-dim); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--text-dim); pointer-events: none; }
 
         /* ── Overlays ── */
         .overlay {
@@ -260,7 +279,29 @@
         @media (max-width: 480px) {
             .status-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
             .badge { align-self: flex-end; }
-            .header-btn span { display: none; }
+            
+            .hamburger { display: block; }
+            
+            .nav-drawer {
+                position: fixed;
+                top: 0;
+                right: -350px;
+                width: 240px;
+                height: 100vh;
+                background: var(--surface);
+                flex-direction: column;
+                align-items: stretch;
+                padding: 4.5rem 1.5rem 2rem;
+                gap: 1rem;
+                transition: right 0.3s ease;
+                z-index: 900;
+                border-left: 1px solid #2a2a2c;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            }
+            
+            .nav-drawer.open {
+                right: -20px;
+            }
         }
 
         @media (min-width: 480px) {
@@ -274,24 +315,31 @@
         <h1>ShadowSwitch</h1>
         <div class="header-actions" id="header-actions" style="display:none;">
 
-            <!-- Download button -->
-            <button class="header-btn" title="Download Receiver" onclick="openDownload()">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                <span>Download</span>
+            <button id="hamburger-btn" class="hamburger" onclick="toggleMenu()" title="Menu">
+                <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
             </button>
 
-            <!-- Settings / credentials button -->
-            <button class="header-btn" title="Update Admin Credentials" onclick="openSettings()">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-                <span>Settings</span>
-            </button>
+            <div class="nav-drawer" id="nav-drawer">
 
-            <!-- Logout button -->
-            <button class="header-btn" title="Logout Dashboard" onclick="logoutDashboard()">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
-                <span>Logout</span>
-            </button>
+                <!-- Download button -->
+                <button class="header-btn" title="Download Receiver" onclick="openDownload()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                    <span>Download</span>
+                </button>
 
+                <!-- Settings / credentials button -->
+                <button class="header-btn" title="Update Admin Credentials" onclick="openSettings()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                    <span>Settings</span>
+                </button>
+
+                <!-- Logout button -->
+                <button class="header-btn" title="Logout Dashboard" onclick="logoutDashboard()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+                    <span>Logout</span>
+                </button>
+
+            </div>
         </div>
     </header>
 
@@ -391,14 +439,29 @@
     </div>
 
     <script>
-        function openDownload()  { document.getElementById('download-overlay').style.display = 'flex'; }
+        function toggleMenu() {
+            const drawer = document.getElementById('nav-drawer');
+            const backdrop = document.getElementById('menu-backdrop');
+            const isOpen = drawer.classList.toggle('open');
+            backdrop.style.display = isOpen ? 'block' : 'none';
+        }
+
+        function openDownload()  { toggleMenu(); document.getElementById('download-overlay').style.display = 'flex'; }
         function closeDownload() { document.getElementById('download-overlay').style.display = 'none'; }
-        function openSettings()  { document.getElementById('settings-overlay').style.display = 'flex'; }
+        function openSettings()  { toggleMenu(); document.getElementById('settings-overlay').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
+        function logoutDashboard() {
+            toggleMenu();
+            if (confirm("Are you sure you want to logout from the dashboard?")) {
+                localStorage.removeItem('ss_session');
+                window.location.reload();
+            }
+        }
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <script src="app.js"></script>
+    <div id="menu-backdrop" onclick="toggleMenu()" style="display:none; position:fixed; inset:0; z-index:899;"></div>
 </body>
 </html>

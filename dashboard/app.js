@@ -102,22 +102,7 @@ function checkSession() {
     }
 }
 
-function logoutDashboard() {
-    if (confirm("Are you sure you want to logout from the dashboard?")) {
-        localStorage.removeItem('ss_session');
-        window.location.reload();
-    }
-}
-
 // --- Settings Logic ---
-
-function openSettings() {
-    settingsOverlay.style.display = 'flex';
-}
-
-function closeSettings() {
-    settingsOverlay.style.display = 'none';
-}
 
 function downloadReceiver() {
     const downloadUrl = "https://github.com/Kevsssssss/shadow-switch/releases/download/v1.0.0/receiver.exe";
