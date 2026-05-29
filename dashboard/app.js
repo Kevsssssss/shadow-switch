@@ -120,9 +120,7 @@ function closeSettings() {
 }
 
 function downloadReceiver() {
-    // Assuming the binary is hosted at the root of the same domain or a specific path
-    // For Vercel, you can place receiver.exe in the 'public' folder or similar
-    const downloadUrl = "/receiver.exe";
+    const downloadUrl = "https://github.com/Kevsssssss/shadow-switch/releases/download/v1.0.0/receiver.exe";
     const link = document.createElement('a');
     link.href = downloadUrl;
     link.download = "receiver.exe";
