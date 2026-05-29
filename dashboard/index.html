@@ -13,9 +13,7 @@
             --text-dim: #a0a0a0;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             background-color: var(--bg);
@@ -30,7 +28,7 @@
 
         header {
             width: 100%;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             text-align: center;
             border-bottom: 1px solid var(--surface);
             position: relative;
@@ -50,24 +48,33 @@
             right: 20px;
             transform: translateY(-50%);
             display: flex;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .header-btn {
             background: none;
-            border: 1px solid var(--surface);
+            border: 1px solid #2a2a2c;
             color: var(--text-dim);
-            padding: 0.5rem;
+            padding: 0.45rem 0.75rem;
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
+            gap: 0.4rem;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            transition: all 0.15s;
+            white-space: nowrap;
         }
 
         .header-btn:hover {
             border-color: var(--accent);
             color: var(--text);
+            background: rgba(221, 44, 0, 0.08);
         }
+
+        .header-btn svg { flex-shrink: 0; }
 
         .container {
             width: 90%;
@@ -86,15 +93,8 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
-        .status-info {
-            flex-grow: 1;
-            width: 100%;
-        }
-
-        .status-info h2 {
-            margin: 0;
-            font-size: 1.1rem;
-        }
+        .status-info { flex-grow: 1; width: 100%; }
+        .status-info h2 { margin: 0; font-size: 1.1rem; }
 
         #machine-selector {
             background: var(--bg);
@@ -122,7 +122,7 @@
             text-transform: uppercase;
         }
 
-        .badge-online { background: #2e7d32; color: #fff; }
+        .badge-online  { background: #2e7d32; color: #fff; }
         .badge-offline { background: #c62828; color: #fff; }
 
         .btn-remove {
@@ -135,10 +135,7 @@
             cursor: pointer;
             border-radius: 4px;
         }
-        .btn-remove:hover {
-            border-color: var(--accent);
-            color: #fff;
-        }
+        .btn-remove:hover { border-color: var(--accent); color: #fff; }
 
         .controls {
             display: grid;
@@ -162,25 +159,15 @@
             gap: 0.5rem;
         }
 
-        button:hover {
-            background: var(--accent);
-            transform: translateY(-2px);
-        }
+        button:hover { background: var(--accent); transform: translateY(-2px); }
+        button:active { transform: translateY(0); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--text-dim); }
 
-        button:active {
-            transform: translateY(0);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            border-color: var(--text-dim);
-        }
-
+        /* ── Overlays ── */
         .overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.92);
             display: none;
             justify-content: center;
             align-items: center;
@@ -190,52 +177,94 @@
         .modal {
             background: var(--surface);
             padding: 2rem;
-            border-radius: 8px;
+            border-radius: 10px;
             width: 90%;
-            max-width: 400px;
+            max-width: 420px;
             text-align: center;
         }
 
-        .modal h3 { margin-top: 0; color: var(--accent); }
+        .modal h3 {
+            margin: 0 0 1.5rem;
+            color: var(--accent);
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
         .modal input {
             width: 100%;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
+            padding: 0.75rem 0.9rem;
+            margin: 0.4rem 0;
             background: var(--bg);
-            border: 1px solid var(--surface);
+            border: 1px solid #2a2a2c;
             color: var(--text);
-            border-radius: 4px;
-            box-sizing: border-box;
+            border-radius: 5px;
+            font-size: 0.9rem;
         }
+
         .modal input:focus {
             border-color: var(--accent);
             outline: none;
         }
 
+        .modal-note {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            margin: 0.25rem 0 1rem;
+            text-align: left;
+        }
+
         .modal-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             margin-top: 1.5rem;
         }
-        .modal-actions button { flex: 1; }
-        .btn-cancel { border-color: var(--text-dim); }
-        .btn-cancel:hover { background: #333; }
+
+        .modal-actions button { flex: 1; padding: 0.85rem; font-size: 0.9rem; }
+        .btn-cancel { border-color: #2a2a2c; color: var(--text-dim); }
+        .btn-cancel:hover { background: #222224; transform: none; }
+
+        /* ── Download panel inside its own modal ── */
+        .download-modal .setup-box {
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 1rem 1.1rem;
+            text-align: left;
+            margin-top: 1rem;
+            font-size: 0.82rem;
+        }
+
+        .download-modal .setup-box ol {
+            margin: 0.6rem 0 0 1.1rem;
+            padding: 0;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        .download-modal .setup-box code {
+            background: #2a2a2c;
+            padding: 0.1rem 0.35rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+
+        .btn-download {
+            width: 100%;
+            background: #1b4d1e !important;
+            border-color: #2e7d32 !important;
+            color: #fff !important;
+            margin-bottom: 0;
+        }
+
+        .btn-download:hover { background: #2e7d32 !important; }
 
         @media (max-width: 480px) {
-            .status-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            .badge {
-                align-self: flex-end;
-            }
+            .status-card { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .badge { align-self: flex-end; }
+            .header-btn span { display: none; }
         }
 
         @media (min-width: 480px) {
-            .controls {
-                grid-template-columns: 1fr 1fr;
-            }
+            .controls { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -244,16 +273,28 @@
     <header>
         <h1>ShadowSwitch</h1>
         <div class="header-actions" id="header-actions" style="display:none;">
-            <button class="header-btn" title="Settings" onclick="openSettings()">
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+
+            <!-- Download button -->
+            <button class="header-btn" title="Download Receiver" onclick="openDownload()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                <span>Download</span>
             </button>
+
+            <!-- Settings / credentials button -->
+            <button class="header-btn" title="Update Admin Credentials" onclick="openSettings()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>Settings</span>
+            </button>
+
+            <!-- Logout button -->
             <button class="header-btn" title="Logout Dashboard" onclick="logoutDashboard()">
-                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+                <span>Logout</span>
             </button>
+
         </div>
     </header>
 
-    <!-- Configuration injected securely by Vercel Node script -->
     <script src="config.js"></script>
 
     <div class="container" id="main-content" style="display:none;">
@@ -289,61 +330,72 @@
         </div>
     </div>
 
-    <!-- Login Overlay -->
+    <!-- ── Login Overlay ── -->
     <div id="login-overlay" class="overlay" style="display:flex;">
         <form class="modal" onsubmit="event.preventDefault(); handleLogin();">
             <h3>ShadowSwitch Login</h3>
-            <input type="text" id="login-user" placeholder="Username" required>
-            <input type="password" id="login-pass" placeholder="Password" required>
-            <button type="submit" style="width:100%; margin-top:1rem; background:var(--accent);">Login</button>
+            <input type="text" id="login-user" placeholder="Username" required autocomplete="username">
+            <input type="password" id="login-pass" placeholder="Password" required autocomplete="current-password">
+            <button type="submit" style="width:100%; margin-top:1.25rem; background:var(--accent); border-color:var(--accent);">Login</button>
         </form>
     </div>
 
-    <!-- Settings Overlay -->
-    <div id="settings-overlay" class="overlay">
-        <form class="modal" onsubmit="event.preventDefault(); saveSettings();">
-            <h3>Dashboard Settings</h3>
-            
-            <div style="border-bottom: 1px solid var(--surface); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
-                <h4 style="margin: 0 0 1rem 0; color: var(--text-dim); font-size: 0.9rem; text-align: left;">Receiver Management</h4>
-                <button type="button" onclick="downloadReceiver()" style="width: 100%; background: #2e7d32; border-color: #2e7d32; margin-bottom: 1rem;">
-                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="margin-right: 8px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                    Download Receiver (.exe)
-                </button>
-                <div class="setup-box">
-                    <strong style="color: var(--accent);">Setup Instructions:</strong>
-                    <ol style="margin: 0.5rem 0 0 1.2rem; padding: 0; color: var(--text-dim);">
-                        <li>Download the <code>receiver.exe</code> binary.</li>
-                        <li>Press <code>Win + R</code>, type <code>shell:startup</code>, and hit Enter.</li>
-                        <li>Move the downloaded <code>receiver.exe</code> into that folder.</li>
-                        <li>Double-click it to start (it runs silently in the background).</li>
-                    </ol>
-                </div>
+    <!-- ── Download Overlay ── -->
+    <div id="download-overlay" class="overlay">
+        <div class="modal download-modal">
+            <h3>Download Receiver</h3>
+            <button class="btn-download" onclick="downloadReceiver()">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Download receiver.exe
+            </button>
+            <div class="setup-box">
+                <strong style="color: var(--accent); font-size: 0.82rem;">Setup Instructions</strong>
+                <ol>
+                    <li>Download the <code>receiver.exe</code> binary.</li>
+                    <li>Press <code>Win + R</code>, type <code>shell:startup</code>, hit Enter.</li>
+                    <li>Move <code>receiver.exe</code> into that folder.</li>
+                    <li>Double-click it to start — runs silently in the background.</li>
+                </ol>
             </div>
-
-            <h4 style="margin: 0 0 1rem 0; color: var(--text-dim); font-size: 0.9rem; text-align: left;">Update Admin Credentials</h4>
-            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Changes apply to all dashboard users.</p>
-            <input type="text" id="new-user" placeholder="New Username" required autocomplete="username">
-            <input type="password" id="new-pass" placeholder="New Password" required autocomplete="new-password">
-            <input type="password" id="confirm-pass" placeholder="Confirm New Password" required autocomplete="new-password">
             <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="closeSettings()">Cancel</button>
-                <button type="submit" style="background:var(--accent);">Save</button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Action Confirmation Modal -->
-    <div id="modal-overlay" class="overlay" style="background: rgba(0,0,0,0.85);">
-        <div class="modal">
-            <h3 id="modal-title">Confirm Action</h3>
-            <p id="modal-desc">Are you sure you want to proceed?</p>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button id="modal-confirm" onclick="proceedAction()">Confirm</button>
+                <button class="btn-cancel" onclick="closeDownload()">Close</button>
             </div>
         </div>
     </div>
+
+    <!-- ── Settings / Credentials Overlay ── -->
+    <div id="settings-overlay" class="overlay">
+        <form class="modal" onsubmit="event.preventDefault(); saveSettings();">
+            <h3>Update Admin Credentials</h3>
+            <p class="modal-note">Changes apply to all dashboard users.</p>
+            <input type="text"     id="new-user"     placeholder="New Username"         required autocomplete="username">
+            <input type="password" id="new-pass"     placeholder="New Password"         required autocomplete="new-password">
+            <input type="password" id="confirm-pass" placeholder="Confirm New Password" required autocomplete="new-password">
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeSettings()">Cancel</button>
+                <button type="submit" style="background:var(--accent); border-color:var(--accent);">Save</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- ── Action Confirmation Modal ── -->
+    <div id="modal-overlay" class="overlay" style="background: rgba(0,0,0,0.85);">
+        <div class="modal">
+            <h3 id="modal-title">Confirm Action</h3>
+            <p id="modal-desc" style="color:var(--text-dim); font-size:0.9rem;">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button id="modal-confirm" onclick="proceedAction()" style="background:var(--accent); border-color:var(--accent);">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDownload()  { document.getElementById('download-overlay').style.display = 'flex'; }
+        function closeDownload() { document.getElementById('download-overlay').style.display = 'none'; }
+        function openSettings()  { document.getElementById('settings-overlay').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
+    </script>
 
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
