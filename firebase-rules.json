@@ -13,7 +13,7 @@
     "commands": {
       "$machine_id": {
         ".read": "auth != null",
-        ".write": "auth != null"
+        ".write": "newData.isString() && (newData.val() == 'shutdown' || newData.val() == 'restart' || newData.val() == 'logout' || newData.val() == 'lock')"
       }
     }
   }
